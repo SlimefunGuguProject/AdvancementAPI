@@ -3,9 +3,12 @@ package net.roxeez.advancement.display;
 import com.google.common.base.Preconditions;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Consumer;
 
 /**
@@ -18,14 +21,14 @@ public class Display {
      */
     @Expose
     @SerializedName("title")
-    private String title = "UNDEFINED";
+    private BaseComponent title = new TextComponent("UNDEFINED");
 
     /**
      * Description of this advancement
      */
     @Expose
     @SerializedName("description")
-    private String description = "UNDEFINED";
+    private BaseComponent description = new TextComponent("UNDEFINED");
 
     /**
      * Icon of this advancement
@@ -74,9 +77,29 @@ public class Display {
      *
      * @param title Title of advancement
      */
-    public void setTitle(@NotNull String title) {
+    public void setTitle(@NotNull BaseComponent title) {
         Preconditions.checkNotNull(title);
         this.title = title;
+    }
+
+    /**
+     * Set title of this advancement
+     *
+     * @param title Title of advancement
+     */
+    public void setTitle(@NotNull String title) {
+        Preconditions.checkNotNull(title);
+        this.title = new TextComponent(title);
+    }
+
+    /**
+     * Set description of this advancement
+     *
+     * @param description Description of advancement
+     */
+    public void setDescription(@NotNull BaseComponent description) {
+        Preconditions.checkNotNull(description);
+        this.description = description;
     }
 
     /**
@@ -86,7 +109,7 @@ public class Display {
      */
     public void setDescription(@NotNull String description) {
         Preconditions.checkNotNull(description);
-        this.description = description;
+        this.description = new TextComponent(description);
     }
 
     /**
@@ -101,7 +124,7 @@ public class Display {
 
     /**
      * Set the icon of this advancement
-     * 
+     *
      * @param icon The icon of this advancement
      */
     public void setIcon(@NotNull Icon icon) {
@@ -131,12 +154,12 @@ public class Display {
     public void setIcon(@NotNull Material material) {
         this.icon = new Icon(material, null);
     }
-    
+
     /**
      * Shortcut to only set an item with NBT values as icon
      *
      * @param material Item of advancement icon
-     * @param nbt NBT values of the advancement icon
+     * @param nbt      NBT values of the advancement icon
      */
     public void setIcon(@NotNull Material material, String nbt) {
         this.icon = new Icon(material, nbt);

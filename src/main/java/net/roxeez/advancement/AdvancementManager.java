@@ -4,13 +4,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import net.roxeez.advancement.serialization.ObjectSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class used to register and manage all advancement created by a plugin
@@ -81,6 +82,9 @@ public class AdvancementManager {
      */
     @SuppressWarnings("deprecation")
     public void createAll(boolean clean) {
+        List<Recipe> recipes = new ArrayList<>();
+        Bukkit.recipeIterator().forEachRemaining(recipes::add);
+
         if (clean) {
             plugin.getLogger().info("[AdvancementAPI] Cleaning previously generated advancements");
             for (Advancement advancement : this.advancements.values()) {
@@ -100,6 +104,13 @@ public class AdvancementManager {
         }
 
         Bukkit.reloadData();
+
+        Set<NamespacedKey> currentRecipes = new HashSet<>();
+        Bukkit.recipeIterator().forEachRemaining(recipe -> currentRecipes.add(((Keyed) recipe).getKey()));
+
+        recipes.stream()
+                .filter(recipe -> !currentRecipes.contains(((Keyed) recipe).getKey()))
+                .forEach(Bukkit::addRecipe);
     }
 
 }

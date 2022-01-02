@@ -8,8 +8,8 @@ import org.bukkit.Material;
 public class ItemData {
 
     @Expose
-    @SerializedName("item")
-    private Material item;
+    @SerializedName("items")
+    private Material[] item = new Material[1];
 
     @Expose
     @SerializedName("count")
@@ -22,13 +22,13 @@ public class ItemData {
     @Expose
     @SerializedName("potion")
     private PotionType potion;
-    
+
     @Expose
     @SerializedName("nbt")
     private String nbt;
 
     public void setType(Material material) {
-        this.item = material;
+        this.item[0] = material;
     }
 
     public void setCount(int minimum) {
@@ -50,9 +50,9 @@ public class ItemData {
     public void setPotion(PotionType potion) {
         this.potion = potion;
     }
-    
+
     public void setNbt(String nbt) {
         this.nbt = nbt;
     }
-    
+
 }

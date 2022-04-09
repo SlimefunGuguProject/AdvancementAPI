@@ -95,7 +95,7 @@ public class AdvancementManager {
 
             Bukkit.reloadData();
         }
-
+        //TODO: reload
         plugin.getLogger().info("[AdvancementAPI] Generating advancements");
         for (Advancement advancement : this.advancements.values()) {
             if (Bukkit.getAdvancement(advancement.getKey()) == null) {

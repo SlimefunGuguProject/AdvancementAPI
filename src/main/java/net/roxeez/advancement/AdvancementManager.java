@@ -87,15 +87,25 @@ public class AdvancementManager {
 
         if (clean) {
             plugin.getLogger().info("[AdvancementAPI] Cleaning previously generated advancements");
-            for (Advancement advancement : this.advancements.values()) {
-                if (Bukkit.getAdvancement(advancement.getKey()) != null) {
-                    Bukkit.getUnsafe().removeAdvancement(advancement.getKey());
+            List<NamespacedKey> toRemove = new ArrayList<>();
+            while (true) {
+                Iterator<org.bukkit.advancement.Advancement> iterator = Bukkit.advancementIterator();
+                if (!iterator.hasNext()) break;
+
+                org.bukkit.advancement.Advancement adv = iterator.next();
+                if (adv.getKey().getKey().equals(plugin.getName().toLowerCase(Locale.ROOT))) {
+                    toRemove.add(adv.getKey());
+                }
+            }
+            for (NamespacedKey advancement : toRemove) {
+                if (Bukkit.getAdvancement(advancement) != null) {
+                    Bukkit.getUnsafe().removeAdvancement(advancement);
                 }
             }
 
             Bukkit.reloadData();
         }
-        //TODO: reload
+
         plugin.getLogger().info("[AdvancementAPI] Generating advancements");
         for (Advancement advancement : this.advancements.values()) {
             if (Bukkit.getAdvancement(advancement.getKey()) == null) {

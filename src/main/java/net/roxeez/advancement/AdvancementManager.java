@@ -62,7 +62,7 @@ public class AdvancementManager {
     public void register(@NotNull AdvancementCreator creator) {
         Preconditions.checkNotNull(creator);
         Advancement advancement = creator.create(new Context(plugin, advancements));
-        this.advancements.put(advancement.getKey(), advancement);
+        register(advancement);
     }
 
     /**
@@ -72,7 +72,15 @@ public class AdvancementManager {
      */
     public void register(@NotNull Advancement advancement) {
         Preconditions.checkNotNull(advancement);
-        advancements.put(advancement.getKey(), advancement);
+        NamespacedKey key = advancement.getKey();
+        if (!key.getKey().equals(plugin.getName().toLowerCase(Locale.ROOT))) {
+            throw new IllegalArgumentException("key namespace must be from plugin");
+        }
+        advancements.put(key, advancement);
+    }
+
+    public void clearAdvancements() {
+        this.advancements.clear();
     }
 
     /**
@@ -88,9 +96,8 @@ public class AdvancementManager {
         if (clean) {
             plugin.getLogger().info("[AdvancementAPI] Cleaning previously generated advancements");
             List<NamespacedKey> toRemove = new ArrayList<>();
-            while (true) {
-                Iterator<org.bukkit.advancement.Advancement> iterator = Bukkit.advancementIterator();
-                if (!iterator.hasNext()) break;
+            Iterator<org.bukkit.advancement.Advancement> iterator = Bukkit.advancementIterator();
+            while (iterator.hasNext()) {
 
                 org.bukkit.advancement.Advancement adv = iterator.next();
                 if (adv.getKey().getKey().equals(plugin.getName().toLowerCase(Locale.ROOT))) {

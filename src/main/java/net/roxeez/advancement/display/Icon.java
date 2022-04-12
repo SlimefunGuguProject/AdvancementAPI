@@ -51,7 +51,7 @@ public class Icon {
         this.item = item.getType().getKey();
         //please don't look at the following code
         try {
-            String packageName = Bukkit.getServer().getClass().getPackageName();
+            String packageName = Bukkit.getServer().getClass().getPackage().getName();
             Class<?> aClass = Class.forName(packageName + ".inventory.CraftItemStack");
             Method asNMSCopy = aClass.getMethod("asNMSCopy", ItemStack.class);
             Object nmsstack = asNMSCopy.invoke(null, item);

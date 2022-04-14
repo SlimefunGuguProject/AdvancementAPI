@@ -73,7 +73,7 @@ public class AdvancementManager {
     public void register(@NotNull Advancement advancement) {
         Preconditions.checkNotNull(advancement);
         NamespacedKey key = advancement.getKey();
-        if (!key.getKey().equals(plugin.getName().toLowerCase(Locale.ROOT))) {
+        if (!key.getNamespace().equals(plugin.getName().toLowerCase(Locale.ROOT))) {
             throw new IllegalArgumentException("key namespace must be from plugin");
         }
         advancements.put(key, advancement);
@@ -100,7 +100,7 @@ public class AdvancementManager {
             while (iterator.hasNext()) {
 
                 org.bukkit.advancement.Advancement adv = iterator.next();
-                if (adv.getKey().getKey().equals(plugin.getName().toLowerCase(Locale.ROOT))) {
+                if (adv.getKey().getNamespace().equals(plugin.getName().toLowerCase(Locale.ROOT))) {
                     toRemove.add(adv.getKey());
                 }
             }

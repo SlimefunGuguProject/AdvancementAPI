@@ -18,6 +18,27 @@ import java.lang.reflect.Method;
  */
 public class Icon {
 
+    private static Method asNMSCopy;
+    private static Field nbtField;
+    static {
+        try {
+            String packageName = Bukkit.getServer().getClass().getPackage().getName();
+            Class<?> aClass = Class.forName(packageName + ".inventory.CraftItemStack");
+            asNMSCopy = aClass.getMethod("asNMSCopy", ItemStack.class);
+
+            Field f = null;
+            for (Field field : asNMSCopy.getReturnType().getDeclaredFields()) {
+                if (field.getType().getSimpleName().equals("NBTTagCompound")) {
+                    nbtField = field;
+                    nbtField.setAccessible(true);
+                    break;
+                }
+            }
+        } catch (ReflectiveOperationException x) {
+            x.printStackTrace();
+        }
+    }
+
     /**
      * Key of displayed item in this icon
      */
@@ -49,25 +70,15 @@ public class Icon {
 
     public Icon(ItemStack item) {
         this.item = item.getType().getKey();
+
         //please don't look at the following code
         try {
-            String packageName = Bukkit.getServer().getClass().getPackage().getName();
-            Class<?> aClass = Class.forName(packageName + ".inventory.CraftItemStack");
-            Method asNMSCopy = aClass.getMethod("asNMSCopy", ItemStack.class);
-            Object nmsstack = asNMSCopy.invoke(null, item);
-            Class<?> nmsItemStack = nmsstack.getClass();
-            Field f = null;
-            for (Field field : nmsItemStack.getDeclaredFields()) {
-                if (field.getType().getSimpleName().equals("NBTTagCompound")) {
-                    f = field;
-                    break;
-                }
-            }
-            if (f == null) {
+            if (nbtField == null) {
                 this.nbt = null;
                 return;
             }
-            Object compound = f.get(nmsstack);
+            Object nmsstack = asNMSCopy.invoke(null, item);
+            Object compound = nbtField.get(nmsstack);
             this.nbt = compound == null ? null : compound.toString();
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
